@@ -25,12 +25,25 @@
 #include <lwp.h>
 #include <lwp_mem.h>
 #include <lwp_syscall.h>
+#include <dfs_poll.h>
+
+#ifdef RT_USING_DFS_NET
+#include <sys/socket.h>
+#define SYSCNET(f) (f)
+#else
+#define SYSCNET(f) sys_ni
+#endif
 
 #define DBG_ENABLE
 #define DBG_SECTION_NAME    "[LWP_CALL]"
 #define DBG_COLOR
 #define DBG_LEVEL           DBG_WARNING
 #include <rtdbg.h>
+
+int sys_ni(void)
+{
+    return -ENOSYS;
+}
 
 /* thread/process */
 void sys_exit(int value)
@@ -226,6 +239,21 @@ const static void* func_table[] =
     (void *)sys_free,           // 0x0e
     (void *)sys_realloc,      //0x0f
     (void *)sys_fstat,           // 0x10
+    (void *)poll,
+
+    SYSCNET(socket),
+    SYSCNET(connect),
+    SYSCNET(listen),
+    SYSCNET(accept),
+    SYSCNET(bind),
+    SYSCNET(getsockopt),
+    SYSCNET(setsockopt),
+    SYSCNET(recv),
+    SYSCNET(recvfrom),
+    SYSCNET(send),
+    SYSCNET(sendto),
+    SYSCNET(closesocket),
+    SYSCNET(shutdown),
 };
 
 const void *lwp_get_sys_api(rt_uint32_t number)
