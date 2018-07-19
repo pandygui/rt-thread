@@ -39,6 +39,7 @@ struct rt_device_pin
     struct rt_device parent;
     const struct rt_pin_ops *ops;
 };
+typedef struct rt_device_pin rt_pin_t;
 
 #define PIN_LOW                 0x00
 #define PIN_HIGH                0x01
