@@ -2120,6 +2120,9 @@
     <file>
       <name>$PROJ_DIR$\applications\main.c</name>
     </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\examples\network\udpserver.c</name>
+    </file>
   </group>
   <group>
     <name>CORTEX-M4</name>
@@ -2224,6 +2227,45 @@
     </file>
     <file>
       <name>$PROJ_DIR$\drivers\drv_wifi.c</name>
+    </file>
+  </group>
+  <group>
+    <name>Filesystem</name>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\dfs\filesystems\devfs\devfs.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\dfs\src\dfs.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\dfs\filesystems\elmfat\dfs_elm.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\dfs\src\dfs_file.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\dfs\src\dfs_fs.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\dfs\filesystems\net\dfs_net.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\dfs\src\dfs_posix.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\dfs\filesystems\elmfat\ff.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\dfs\filesystems\net\net_netdb.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\dfs\filesystems\net\net_sockets.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\dfs\src\poll.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\dfs\src\select.c</name>
     </file>
   </group>
   <group>
