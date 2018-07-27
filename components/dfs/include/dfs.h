@@ -87,6 +87,8 @@ struct statfs
     size_t f_bfree;   /* free blocks in file system */
 };
 
+#ifndef HAVE_DIRENT_STRUCTURE
+#define HAVE_DIRENT_STRUCTURE
 struct dirent
 {
     uint8_t d_type;           /* The type of the file */
@@ -94,6 +96,7 @@ struct dirent
     uint16_t d_reclen;        /* length of this record */
     char d_name[DFS_PATH_MAX];   /* The null-terminated file name */
 };
+#endif
 
 struct dfs_fdtable
 {

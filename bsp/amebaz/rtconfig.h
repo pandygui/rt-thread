@@ -45,7 +45,7 @@
 /* RT-Thread Components */
 
 #define RT_USING_COMPONENTS_INIT
-
+#define RT_USING_LWP
 /* C++ features */
 
 
@@ -68,10 +68,11 @@
 
 #define RT_USING_DFS
 #define DFS_USING_WORKDIR
-#define DFS_FILESYSTEMS_MAX 2
-#define DFS_FILESYSTEM_TYPES_MAX 2
+#define DFS_FILESYSTEMS_MAX 4
+#define DFS_FILESYSTEM_TYPES_MAX 4
 #define DFS_FD_MAX 4
 #define RT_USING_DFS_ELMFAT
+#define RT_USING_DFS_XIPFS
 
 /* elm-chan's FatFs, Generic FAT Filesystem Module */
 
@@ -154,7 +155,7 @@
 
 
 /* Utilities */
-
+#define RT_USING_RYM
 
 /* RT-Thread online packages */
 

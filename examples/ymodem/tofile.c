@@ -3,8 +3,6 @@
 #include <dfs_posix.h>
 #include <stdlib.h>
 
-#include <board.h>
-
 struct custom_ctx
 {
     struct rym_ctx parent;
@@ -22,7 +20,7 @@ static enum rym_code _rym_bg(
     cctx->fpath[0] = '/';
     /* the buf should be the file name */
     strcpy(&(cctx->fpath[1]), (const char*)buf);
-    cctx->fd = open(cctx->fpath, O_CREAT | O_WRONLY | O_TRUNC, 0);
+    cctx->fd = open(cctx->fpath, O_CREAT | O_WRONLY | O_TRUNC | O_APPEND, 0);
     if (cctx->fd < 0)
     {
         rt_err_t err = rt_get_errno();
@@ -110,4 +108,13 @@ rt_err_t ry(char *dname)
     return res;
 }
 FINSH_FUNCTION_EXPORT(ry, receive files by ymodem protocol);
+
+void ryload(int argc, char **argv)
+{
+    if (argc < 2)
+      return;
+    
+    ry(argv[1]);
+}
+MSH_CMD_EXPORT(ryload, ymodem load file on device);
 #endif
