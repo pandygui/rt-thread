@@ -204,6 +204,11 @@ int sys_fstat(int file, struct stat *buf)
     return fstat(file, buf);
 }
 
+int sys_notimpl(void)
+{
+    return -ENOSYS;
+}
+
 const static void* func_table[] =
 {
     (void *)sys_exit,           // 0x01
@@ -230,7 +235,7 @@ const static void* func_table[] =
 
 const void *lwp_get_sys_api(rt_uint32_t number)
 {
-    const void *func = RT_NULL;
+    const void *func = sys_notimpl;
 
     if (number == 0xff)
     {
