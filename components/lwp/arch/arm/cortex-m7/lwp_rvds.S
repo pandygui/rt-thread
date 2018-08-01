@@ -67,70 +67,45 @@ SVC_Handler    PROC
     EXPORT SVC_Handler
 
     PUSH    {LR}
+	push    {r0-r3}   ;save app param1~4
+    push    {r4-r5}   ;save app param5~6
 
     ; get user SP.
     TST     LR, #0x4
     ITE     EQ
     MRSEQ   R1, MSP
     MRSNE   R1, PSP
-
-    PUSH    {R1}                        ; push app SP.
-    MOV     R2, R1
-
-    IF      {FPU} != "SoftVFP"
-    TST       LR, #0x10
-    VSTMFDEQ  R2!, {D8 - D15}
-    ENDIF
-
-    STMFD   R2!, {R4 - R11}              ; push app R4-R11 to app stack , and R1 not change.
-
-    IF      {FPU} != "SoftVFP"
-    MOV     R4, #0x00               ; flag = 0
-    TST     LR, #0x10               ; if(!EXC_RETURN[4])
-    MOVEQ   R4, #0x01               ; flag = 1
-    STMFD   R2!, {R4}               ; push flag
-    ENDIF
+    PUSH    {R1}           ; push app SP.
 
     ; get SVC number.
-    LDR     R0, [R1, #24]               ; get the app LR.
-    LDRB    R0, [R0, #-2]               ; get the SVC No. from instruction.
+    mov     R0, R7
 
     ; get kernel system API
     BL      lwp_get_sys_api
-
-    ; if(api == NULL) return;
-    CMP     R0, #0
-    POPEQ   {R1}
-    POPEQ   {LR}
-    BXEQ    LR
-
-    ; push api
-    PUSH    {R0}
+    
+    PUSH    {R0}            ; push api
 
     ; get kernel SP to R0.
     BL lwp_get_kernel_sp
 
-    POP     {R2}                        ; pop api to R2.
-    POP     {R1}                        ; pop app SP to R1.
-
+    POP     {R2}             ; pop api to R2.
+    POP     {R1}             ; pop app SP to R1.
+    
+	stmfd     r0!, {r1}
+	
+	;push app parm5~6 to Server SP
+	pop {r4-r5}
+	STMFD   R0!,  {R4 - R5}
     ; copy R1(app SP) to R0(server SP).
     LDMFD   R1,   {R4 - R11}     ; pop exception_stack_frame to r4 - r11 register
     STMFD   R0!,  {R4 - R11}     ; push exception_stack_frame to server SP.
+	
+	LDR     R3, =svc_exit
+    STR     R3, [R0, #20]       ; update LR
+    STR     R2, [R0, #24]       ; update api to PC
+    MSR     PSP, R0             ; update stack pointer
 
-    POP     {LR}
-    PUSH    {LR}
-
-    ; save app SP.
-    PUSH    {R0 - R3}
-    IF      {FPU} != "SoftVFP"
-    TST     LR, #0x10
-    SUBEQ   R0, R1, #0x64               ; keep {R4 - R11}, {D8-D15}, FLAG
-    SUBNE   R0, R1, #0x24               ; keep {R4 - R11}, FLAG
-    ELSE
-    SUB     R0, R1, #0x20               ; keep {R4 - R11}
-    ENDIF
-    BL      lwp_set_kernel_sp
-    POP     {R0 - R3}
+    ;BL      lwp_set_kernel_sp
 
     ; set to thread-privilege mode.
     MRS     R3, CONTROL
@@ -138,11 +113,7 @@ SVC_Handler    PROC
     ORR     R3, R3, #0x02
     MSR     CONTROL, R3
 
-    ; call api.
-    LDR     R3, =svc_exit
-    STR     R3, [R0, #20]       ; update LR
-    STR     R2, [R0, #24]       ; update api to PC
-    MSR     PSP, R0             ; update stack pointer
+	pop     {r0-r3}
     POP     {LR}                ; 0xFFFFFFED
 
     ORR     LR, LR, #0x10
@@ -160,53 +131,19 @@ svc_exit     PROC
     ; get user SP.
     PUSH    {R0}                    ; push result to SP.
     BL      lwp_get_kernel_sp
+ 
+    ldr   r3, [r0, #-4]
+    pop {r0}
 
-    IF      {FPU} != "SoftVFP"
-    LDMFD   R0!, {R3}               ; pop flag
-    ENDIF
-
-    LDMFD   R0!, {R4 - R11}         ; pop app {R4 - R11}
-
-    IF      {FPU} != "SoftVFP"
-    CMP     R3,  #0                 ; if(flag_r3 != 0)
-    VLDMFDNE  R0!, {D8 - D15}       ; pop FPU register s16~s31
-    ENDIF
-
-    ADD     R0, R0, #16             ; skip R0-R3
-    LDMFD   R0!, {R12, LR}          ;
-    LDMFD   R0!, {R1}               ; pop PC to R1
-    LDMFD   R0!, {R2}               ; pop PSR to R2
-
-    IF      {FPU} != "SoftVFP"
-    CMP     R3,  #0                 ; if(flag_r3 != 0)
-    VLDMFDNE  R0!, {D0 - D7}       ; pop FPU register s16~s31
-    LDMFDNE   R0!, {R3}
-    VMSRNE    FPSCR,  R3
-
-    ENDIF
-
-    ; align to 2 words
-    ADD     R0, R0, #0x07
-    BIC     R0, R0, #0x07
-    PUSH    {R0}                    ; push user-SP to SP
-
-    ; save server SP.
-    ADD     R0, SP, #0x08           ; [user-SP, result]
-    PUSH    {R1 - R2, LR}
-    BL      lwp_set_kernel_sp
-    POP     {R1 - R2, LR}
-
-    POP     {R3}                    ; pop user-SP to R3
-    POP     {R0}                    ; restore API result.
-
-    MSR     APSR, R2                ; restore PSR
-    MSR     PSP, R3                 ; restore app stack pointer
-
+    ldr     lr, [r3, #20]
+	ldr r1, [r3,#24]
+	add r3,#32
+	MSR     PSP, R3                 ; restore app stack pointer
     ; restore to PSP & thread-unprivilege mode.
     MRS     R2, CONTROL
     ORR     R2, R2, #0x03
     MSR     CONTROL, R2
-
+    
     ; return to lwp.
     ORR     R1, R1, #0x01           ; only Thumb-mode.
     BX      R1                      ; return to user app.
