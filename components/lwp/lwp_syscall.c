@@ -240,22 +240,21 @@ const static void* func_table[] =
     (void *)sys_free,           // 0x0e
     (void *)sys_realloc,      //0x0f
     (void *)sys_fstat,           // 0x10
-    poll,
+    poll,                        // 0x11
 
-        SYSCALL_NET(accept),
-        SYSCALL_NET(bind),
-        SYSCALL_NET(shutdown),
-        SYSCALL_NET(getpeername),
-        SYSCALL_NET(getsockname),
-        SYSCALL_NET(getsockopt),
-        SYSCALL_NET(setsockopt),
-        SYSCALL_NET(connect),
-        SYSCALL_NET(listen),
-        SYSCALL_NET(recv),
-        SYSCALL_NET(recvfrom),
-        SYSCALL_NET(send),
-        SYSCALL_NET(sendto),
-
+    SYSCALL_NET(accept),     // 0x12
+    SYSCALL_NET(bind),       // 0x13
+    SYSCALL_NET(shutdown),   // 0x14
+    SYSCALL_NET(getpeername),// 0x15
+    SYSCALL_NET(getsockname),// 0x16
+    SYSCALL_NET(getsockopt), // 0x17
+    SYSCALL_NET(setsockopt), // 0x18
+    SYSCALL_NET(connect),    // 0x19
+    SYSCALL_NET(listen),     // 0x1a
+    SYSCALL_NET(recv),       // 0x1b
+    SYSCALL_NET(recvfrom),   // 0x1c
+    SYSCALL_NET(send),       // 0x1d
+    SYSCALL_NET(sendto),     // 0x1e
 };
 
 const void *lwp_get_sys_api(rt_uint32_t number)
