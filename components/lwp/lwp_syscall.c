@@ -26,6 +26,15 @@
 #include <lwp_mem.h>
 #include <lwp_syscall.h>
 
+#include <dfs_poll.h>
+#if (defined(RT_USING_SAL) && defined(SAL_USING_POSIX))
+#include <sys/socket.h>
+
+#define SYSCALL_NET(f) (f)
+#else
+#define SYSCALL_NET(f) (sys_notimpl)
+#endif
+
 #define DBG_ENABLE
 #define DBG_SECTION_NAME    "LWP_CALL"
 #define DBG_COLOR
@@ -231,6 +240,22 @@ const static void* func_table[] =
     (void *)sys_free,           // 0x0e
     (void *)sys_realloc,      //0x0f
     (void *)sys_fstat,           // 0x10
+    poll,
+
+        SYSCALL_NET(accept),
+        SYSCALL_NET(bind),
+        SYSCALL_NET(shutdown),
+        SYSCALL_NET(getpeername),
+        SYSCALL_NET(getsockname),
+        SYSCALL_NET(getsockopt),
+        SYSCALL_NET(setsockopt),
+        SYSCALL_NET(connect),
+        SYSCALL_NET(listen),
+        SYSCALL_NET(recv),
+        SYSCALL_NET(recvfrom),
+        SYSCALL_NET(send),
+        SYSCALL_NET(sendto),
+
 };
 
 const void *lwp_get_sys_api(rt_uint32_t number)
