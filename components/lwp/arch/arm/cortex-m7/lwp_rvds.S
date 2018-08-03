@@ -67,8 +67,6 @@ SVC_Handler    PROC
     EXPORT SVC_Handler
 
     PUSH    {LR}
-	push    {r0-r3}   ;save app param1~4
-    push    {r4-r5}   ;save app param5~6
 
     ; get user SP.
     TST     LR, #0x4
@@ -94,12 +92,13 @@ SVC_Handler    PROC
 	stmfd     r0!, {r1}
 	
 	;push app parm5~6 to Server SP
-	pop {r4-r5}
 	STMFD   R0!,  {R4 - R5}
     ; copy R1(app SP) to R0(server SP).
+	push {r8-r11}
     LDMFD   R1,   {R4 - R11}     ; pop exception_stack_frame to r4 - r11 register
     STMFD   R0!,  {R4 - R11}     ; push exception_stack_frame to server SP.
-	
+	pop {r8-r11}
+
 	LDR     R3, =svc_exit
     STR     R3, [R0, #20]       ; update LR
     STR     R2, [R0, #24]       ; update api to PC
@@ -113,7 +112,6 @@ SVC_Handler    PROC
     ORR     R3, R3, #0x02
     MSR     CONTROL, R3
 
-	pop     {r0-r3}
     POP     {LR}                ; 0xFFFFFFED
 
     ORR     LR, LR, #0x10
