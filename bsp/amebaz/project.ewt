@@ -2250,9 +2250,6 @@
       <name>$PROJ_DIR$\..\..\components\dfs\src\dfs_fs.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\dfs\filesystems\net\dfs_net.c</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\..\..\components\dfs\src\dfs_posix.c</name>
     </file>
     <file>
@@ -2260,12 +2257,6 @@
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\components\dfs\filesystems\elmfat\ff.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\dfs\filesystems\net\net_netdb.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\dfs\filesystems\net\net_sockets.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\components\dfs\src\poll.c</name>

@@ -34,7 +34,7 @@
 
 #define SYSCALL_NET(f) (f)
 #else
-#define SYSCALL_NET(f) (sys_notimpl)
+#define SYSCALL_NET(f) ((void *)sys_notimpl)
 #endif
 
 #define DBG_ENABLE
@@ -242,7 +242,7 @@ const static void* func_table[] =
     (void *)sys_free,           // 0x0e
     (void *)sys_realloc,      //0x0f
     (void *)sys_fstat,           // 0x10
-    poll,                        // 0x11
+    (void *)poll,                        // 0x11
 
     SYSCALL_NET(accept),     // 0x12
     SYSCALL_NET(bind),       // 0x13
@@ -259,12 +259,12 @@ const static void* func_table[] =
     SYSCALL_NET(sendto),     // 0x1e
     SYSCALL_NET(socket),     // 0x1f
 
-    select,                  // 0x20
+    (void *)select,                  // 0x20
 };
 
 const void *lwp_get_sys_api(rt_uint32_t number)
 {
-    const void *func = sys_notimpl;
+    const void *func = (void *)sys_notimpl;
 
     if (number == 0xff)
     {
